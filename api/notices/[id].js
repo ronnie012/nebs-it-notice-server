@@ -45,14 +45,14 @@ export default async function handler(req, res) {
 
       // Update status if provided and valid
       if (status) {
-        if (!["published", "unpublished", "draft"].includes(status)) {
+        if (!["Published", "Unpublished", "Draft"].includes(status)) {
           return res.status(400).json({ error: "Invalid status value" });
         }
         updateFields.status = status;
-        if (status === "published") {
+        if (status === "Published") {
           updateFields.publishedAt = new Date();
-        } else if (status === "unpublished" || status === "draft") {
-          updateFields.publishedAt = null; // Clear publishedAt if not published
+        } else if (status === "Unpublished" || status === "Draft") {
+          updateFields.publishedAt = null; // Clear publishedAt if not Published
         }
       }
 

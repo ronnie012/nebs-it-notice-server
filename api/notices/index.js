@@ -42,9 +42,9 @@ export default async function handler(req, res) {
 
         // Apply status filter for fetching data
         const dataQuery = { ...query };
-        if (status === "published") dataQuery.status = "published";
-        if (status === "unpublished") dataQuery.status = "unpublished";
-        if (status === "draft") dataQuery.status = "draft"; // Ensure draft filter works if passed
+        if (status === "Published") dataQuery.status = "Published";
+        if (status === "Unpublished") dataQuery.status = "Unpublished";
+        if (status === "Draft") dataQuery.status = "Draft"; // Ensure Draft filter works if passed
 
         // Fetch data
         const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -58,9 +58,9 @@ export default async function handler(req, res) {
         // Count total for pagination based on current filters
         const total = await collection.countDocuments(dataQuery);
 
-        // Count for active (published) and draft notices regardless of current data filters
-        const publishedCount = await collection.countDocuments({ status: "published" });
-        const draftCount = await collection.countDocuments({ status: "draft" });
+        // Count for active (Published) and Draft notices regardless of current data filters
+        const publishedCount = await collection.countDocuments({ status: "Published" });
+        const draftCount = await collection.countDocuments({ status: "Draft" });
 
         console.log("[LOG] Successfully fetched notices");
         return res.status(200).json({
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       try {
         console.log("[LOG] Handling POST request");
-        const { title, description, noticeType, publishingDate, fileUrl, status } = req.body;
+        const { title, description, noticeType, publishingDate, fileUrl, status, targetDepartmentOrIndividual } = req.body;
         console.log("[LOG] Request body:", req.body);
 
         // Validation
@@ -99,9 +99,10 @@ export default async function handler(req, res) {
           title,
           description,
           noticeType,
+          targetDepartmentOrIndividual,
           publishingDate: publishingDate || null,
           fileUrl: fileUrl || null,
-          status: status || "unpublished",
+          status: status || "Unpublished",
           createdAt: new Date(),
           updatedAt: new Date(),
         };

@@ -86,11 +86,11 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       try {
         console.log("[LOG] Handling POST request");
-        const { title, description, noticeType, publishingDate, fileUrl, status, targetDepartmentOrIndividual } = req.body;
+        const { title, description, noticeType, publishingDate, fileUrl, status, targetDepartmentOrIndividual, employeeId, employeeName, position } = req.body;
         console.log("[LOG] Request body:", req.body);
 
         // Validation
-        if (!title || !description || !noticeType) {
+        if (!title || !description || !noticeType || !employeeId || !employeeName || !position) { // Added employee fields to validation
           console.log("[VALIDATION_ERROR] Required fields missing");
           return res.status(400).json({ error: "Required fields missing" });
         }
@@ -100,6 +100,9 @@ export default async function handler(req, res) {
           description,
           noticeType,
           targetDepartmentOrIndividual,
+          employeeId,
+          employeeName,
+          position,
           publishingDate: publishingDate || null,
           fileUrl: fileUrl || null,
           status: status || "Unpublished",

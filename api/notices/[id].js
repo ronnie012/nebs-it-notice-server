@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   // ------------------------------
   if (req.method === "PATCH") {
     try {
-      const { status, title, description, noticeType, publishingDate, fileUrl } = req.body;
+      const { status, title, description, noticeType, publishingDate, fileUrl, employeeId, employeeName, position } = req.body;
       const updateFields = { updatedAt: new Date() };
 
       // Update status if provided and valid
@@ -62,6 +62,9 @@ export default async function handler(req, res) {
       if (noticeType) updateFields.noticeType = noticeType;
       if (publishingDate !== undefined) updateFields.publishingDate = publishingDate;
       if (fileUrl !== undefined) updateFields.fileUrl = fileUrl;
+      if (employeeId !== undefined) updateFields.employeeId = employeeId;
+      if (employeeName !== undefined) updateFields.employeeName = employeeName;
+      if (position !== undefined) updateFields.position = position;
 
       const update = {
         $set: updateFields,

@@ -25,26 +25,42 @@ export default async function handler(req, res) {
         const {
           search = "",
           status = "",
+          departmentsOrIndividuals = "",
+          publishedOn = "", // Add publishedOn here
           page = 1,
           limit = 6,
         } = req.query;
 
-        const query = {};
 
-        // Search by ID or name/title
+
+        const query = {}; // Initialize query object
+        // Search by text index (title, employeeName, employeeId) or by _id
         if (search) {
-          const searchRegex = new RegExp(search, "i");
-          query.$or = [
-            { title: searchRegex },
-            { _id: ObjectId.isValid(search) ? new ObjectId(search) : null }
-          ].filter(x => x !== null);
+          // If the search term looks like an ObjectId, try to search by _id
+          if (ObjectId.isValid(search)) {
+            query.$or = [{ _id: new ObjectId(search) }];
+          } else {
+            // Otherwise, use the text index for general search across relevant fields
+            query.$text = { $search: search };
+          }
         }
 
         // Apply status filter for fetching data
         const dataQuery = { ...query };
         if (status === "Published") dataQuery.status = "Published";
         if (status === "Unpublished") dataQuery.status = "Unpublished";
-        if (status === "Draft") dataQuery.status = "Draft"; // Ensure Draft filter works if passed
+        if (status === "Draft") dataQuery.status = "Draft";
+
+        // Apply departmentsOrIndividuals filter
+        if (departmentsOrIndividuals) {
+          const formattedDepartment = departmentsOrIndividuals.replace(/\+/g, ' ');
+          dataQuery.targetDepartmentOrIndividual = new RegExp(`^${formattedDepartment}$`, "i");
+        }
+
+        // Apply publishedOn filter
+        if (publishedOn) {
+          dataQuery.publishingDate = publishedOn;
+        }
 
         // Fetch data
         const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -61,6 +77,8 @@ export default async function handler(req, res) {
         // Count for active (Published) and Draft notices regardless of current data filters
         const publishedCount = await collection.countDocuments({ status: "Published" });
         const draftCount = await collection.countDocuments({ status: "Draft" });
+
+
 
         console.log("[LOG] Successfully fetched notices");
         return res.status(200).json({

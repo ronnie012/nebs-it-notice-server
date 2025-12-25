@@ -4,6 +4,9 @@
 
 This is the backend server for the NEBS IT Notice Management platform. It provides a serverless API for creating, reading, updating, and deleting notices. The API is built with Node.js and is designed for deployment on Vercel.
 
+## Live Site Link (URL): https://nebs-it-notice-server.vercel.app/api
+
+
 ## Tech Stack
 
 -   **Runtime**: [Node.js](https://nodejs.org/)
